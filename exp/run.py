@@ -44,7 +44,6 @@ def train(model, optimizer, data):
     optimizer.step()
     del out
 
-
 def test(model, data):
     model.eval()
     with torch.no_grad():
@@ -59,7 +58,6 @@ def test(model, data):
             accs.append(acc)
             losses.append(loss.detach().cpu())
         return accs, preds, losses
-
 
 def run_exp(args, dataset, model_cls, fold):
     data = dataset[0]
@@ -199,4 +197,3 @@ if __name__ == '__main__':
     model_name = args.model if args.evectors == 0 else f"{args.model}+LP{args.evectors}"
     print(f'{model_name} on {args.dataset} | SHA: {sha}')
     print(f'Test acc: {test_acc_mean:.4f} +/- {test_acc_std:.4f} | Val acc: {val_acc_mean:.4f}')
-

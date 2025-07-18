@@ -295,6 +295,19 @@ def get_fixed_splits(data, dataset_name, seed):
 
     return data
 
+from torch_geometric.data import InMemoryDataset
+
+class CircuitDataset(InMemoryDataset):
+    def __init__(self, root, transform=None, pre_transform=None):
+        super().__init__(root, transform, pre_transform)
+        self.data_list = torch.load(osp.join(root, 'processed', 'data.pt'))
+        self.split_idx = torch.load(osp.join(root, 'processed', 'split_idx.pt'))
+
+    def len(self):
+        return len(self.data_list)
+
+    def get(self, idx):
+        return self.data_list[idx]
 
 def get_dataset(name):
     data_root = osp.join(ROOT_DIR, 'datasets')
@@ -306,7 +319,10 @@ def get_dataset(name):
         dataset = Actor(root=data_root, transform=T.NormalizeFeatures())
     elif name in ['cora', 'citeseer', 'pubmed']:
         dataset = Planetoid(root=data_root, name=name, transform=T.NormalizeFeatures())
+    elif name == "circuit_test":
+        return CircuitDataset(root="data/circuit_test", transform=T.NormalizeFeatures())
     else:
         raise ValueError(f'dataset {name} not supported in dataloader')
 
     return dataset
+
